@@ -41,7 +41,7 @@ const LOOP_MODULES = [
     accentBg: "bg-primary/10",
     accentText: "text-primary",
     previewClass: "border-primary/15 bg-primary/[0.05]",
-    nodeClass: "absolute z-20 left-[-2%] top-[16%] w-[164px]",
+    nodeClass: "absolute z-20 left-[3%] top-[14%] w-[164px]",
   },
   {
     key: "resume",
@@ -64,7 +64,7 @@ const LOOP_MODULES = [
     accentBg: "bg-green/10",
     accentText: "text-green",
     previewClass: "border-green/15 bg-green/[0.05]",
-    nodeClass: "absolute z-20 left-1/2 top-[-2%] w-[164px] -translate-x-1/2",
+    nodeClass: "absolute z-20 left-1/2 top-[2%] w-[164px] -translate-x-1/2",
   },
   {
     key: "job-prep",
@@ -87,7 +87,7 @@ const LOOP_MODULES = [
     accentBg: "bg-blue-500/10",
     accentText: "text-blue-400",
     previewClass: "border-blue-500/15 bg-blue-500/[0.05]",
-    nodeClass: "absolute z-20 right-[-2%] top-[16%] w-[164px]",
+    nodeClass: "absolute z-20 right-[3%] top-[14%] w-[164px]",
   },
   {
     key: "copilot",
@@ -568,7 +568,7 @@ function LoopVisual() {
             />
           ))}
 
-          <div className="absolute z-10 left-1/2 top-1/2 w-[286px] -translate-x-1/2 -translate-y-1/2">
+          <div className="absolute z-10 left-1/2 top-1/2 w-[220px] -translate-x-1/2 -translate-y-1/2">
             <CenterMemoryCard activeModule={activeModule} />
           </div>
         </div>
@@ -718,36 +718,36 @@ function CenterMemoryCard({ activeModule, mobile = false }) {
         !mobile && "animate-glow-pulse"
       )}
     >
-      <CardContent className={cn("p-5", !mobile && "p-6")}>
-        <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-          <Repeat size={13} />
+      <CardContent className={cn("p-4", !mobile && "p-4")}>
+        <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-2.5 py-0.5 text-[11px] font-medium text-primary">
+          <Repeat size={11} />
           长期记忆引擎
         </div>
 
-        <h3 className={cn("mt-4 font-display font-bold tracking-tight leading-tight", mobile ? "text-xl" : "text-[28px]")}>
+        <h3 className={cn("mt-3 font-display font-bold tracking-tight leading-tight", mobile ? "text-xl" : "text-base")}>
           统一保存你的面试轨迹
         </h3>
 
-        <div className="mt-4 grid gap-2">
+        <div className="mt-3 grid gap-1.5">
           {["Session Context", "Topic Mastery", "Global Profile"].map((item) => (
             <div
               key={item}
-              className="rounded-2xl border border-border/80 bg-bg/85 px-3.5 py-2.5 text-sm text-dim shadow-sm"
+              className="rounded-xl border border-border/80 bg-bg/85 px-3 py-1.5 text-xs text-dim shadow-sm"
             >
               {item}
             </div>
           ))}
         </div>
 
-        <div className="mt-4 rounded-2xl border border-border/80 bg-bg/85 p-3 shadow-sm">
-          <div className="text-[11px] uppercase tracking-[0.2em] text-dim">当前正在驱动</div>
-          <div className="mt-2 flex items-center gap-2">
-            <div className={cn("flex h-8 w-8 items-center justify-center rounded-xl", activeModule.iconClass)}>
-              <ActiveIcon size={15} />
+        <div className="mt-3 rounded-xl border border-border/80 bg-bg/85 p-2.5 shadow-sm">
+          <div className="text-[10px] uppercase tracking-[0.2em] text-dim">当前正在驱动</div>
+          <div className="mt-1.5 flex items-center gap-2">
+            <div className={cn("flex h-7 w-7 items-center justify-center rounded-lg", activeModule.iconClass)}>
+              <ActiveIcon size={13} />
             </div>
             <div>
-              <div className={cn("text-sm font-semibold", activeModule.accentText)}>{activeModule.title}</div>
-              <div className="text-xs text-dim">{activeModule.headline}</div>
+              <div className={cn("text-xs font-semibold", activeModule.accentText)}>{activeModule.title}</div>
+              <div className="text-[11px] text-dim">{activeModule.headline}</div>
             </div>
           </div>
         </div>

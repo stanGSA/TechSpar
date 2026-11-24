@@ -178,13 +178,20 @@ TechSpar 的记忆系统是一条**复盘后执行的流水线**：每次面试�
 | `tests-ts/profile-memory-retry.test.ts:85,107,110,130,237,251` | 记忆条数为 3（第三条是 weak_point） | 改为 2 |
 | `tests-ts/profile.test.ts:177` | 记忆类型包含 `weak_point` | 去掉 `weak_point` |
 | `tests-ts/profile.test.ts:201` | 规律归纳后能查到 weak_point 向量（对应 `:661` 的写入） | 改为断言规律已写入画像，且没有写入向量 |
+| `tests-ts/contracts/phase-four-profile.test.ts:87,98,156` | 记忆条数为 3 | 改为 2 |
+| `tests-ts/settings-provider.test.ts:221` | 重建时调用了 `vectors:weak_point` | 改为 `not.toContain('vectors:weak_point')` |
+| `tests-ts/contracts/service-response-boundaries.test.ts:134-136` | 重建时写入了 `user-a:weak_point` 分块 | 改为断言没有写入该分块 |
 | `docs/memory-reliability-design.md` | 验收表中的“3 条”及说明 | 改为 2 条 |
+
+`tests-ts/knowledge-retrieval.test.ts:127` 直接调用向量仓库的 `replaceChunks` 写入 weak_point 类型，测试的是仓库本身，不受影响。
+
+**随之失去调用方的代码**：删除 `:661` 后，私有方法 `appendMemories`（`profile-service.ts:453-462`）不再有调用方，一并删除。它调用的端口方法 `appendProfileMemories`（`ports.ts:28`、`knowledge-vector-repository.ts:122`）在 PR-1 中保留，避免扩大改动范围；是否移除留给后续清理。
 
 **重建步骤与契约字段，二选一：**
 
 | 方案 | 做法 | 额外影响 |
 |---|---|---|
-| A（推荐，PR-1 采用） | 保留重建步骤和 `rebuilt.weak_points` 字段，作为**为兼容保留的占位步骤**：不做任何操作，直接标记成功。不需要在这一步清理数据：重建的第一步 `cleanup` 调用 `invalidateUserVectors`，已经删除了该用户除 `session_summary` / `insight` 以外的全部向量行（`knowledge-vector-repository.ts:164`），包括 weak_point；`cleanup` 失败时整个重建会中止（`settings-operations.ts:133`），轮到这一步时已无数据可清 | 契约、fixture、步骤总数（`total: 4`）都不变；`settings-provider.test.ts:219`、`memory-index-rebuild.test.ts:110`、`contracts/phase-three-sse.test.ts:159` 断言的 `weak_points: true` 仍然成立 |
+| A（推荐，PR-1 采用） | 保留重建步骤和 `rebuilt.weak_points` 字段，作为**为兼容保留的占位步骤**：不做任何操作，直接标记成功。不需要在这一步清理数据：重建的第一步 `cleanup` 调用 `invalidateUserVectors`，已经删除了该用户除 `session_summary` / `insight` 以外的全部向量行（`knowledge-vector-repository.ts:164`），包括 weak_point；`cleanup` 失败时整个重建会中止（`settings-operations.ts:135`），轮到这一步时已无数据可清 | 契约、fixture、步骤总数（`total: 4`）都不变；`settings-provider.test.ts:219`、`memory-index-rebuild.test.ts:110`、`contracts/phase-three-sse.test.ts:159` 断言的 `weak_points: true` 仍然成立 |
 | B | 删除重建步骤，从契约中移除字段 | 契约使用 `.strict()`（`index-rebuild-events.ts:11`），属于破坏性变更。需要修改上面 3 处断言、`contracts/phase-three-events.test.ts:64`、`phase-three-frontend.test.ts:90`、`phase-three-sse.test.ts:32` 的 fixture，以及 `memory-index-rebuild.test.ts:109` 断言的步骤总数 `total: 4`，再运行 `bun run gen:api`。前端源码没有读取这个字段（只出现在生成的 `schema.d.ts` 中），界面不受影响 |
 
 方案 B 可以在与维护者确认后，作为单独的清理 PR。
